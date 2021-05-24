@@ -145,25 +145,22 @@ class GameHandler:
         return result_str
 
     def play_turn(self) -> None:
-        print(self.get_current_result_str())
         player1_move = self.player1.play(self.game)
         player2_move = self.player2.play(self.game)
         player1_result, player2_result = self.game.selection_set.get_result(player1_move, player2_move)
         self.player1.observe(player1_move, player2_move, player1_result, player2_result)
         self.player2.observe(player2_move, player1_move, player2_result, player1_result)
         print(self.get_result_str(player1_move, player2_move, player1_result, player2_result))
-        self.history.append(
-            {
-                "player1_move": player1_move,
-                "player2_move": player2_move,
-                "player1_result": player1_result,
-                "player2_result": player2_result,
-            }
-        )
+        self.add_turn_to_history(player1_move, player2_move, player1_result, player2_result)
+        print(self.get_current_result_str())
 
-    def play(self) -> None:
+    def play(self, max_num_of_turns: Optional[int] = None) -> None:
+        i_turn = 0
         while True:
             self.play_turn()
+            i_turn += 1
+            if i_turn == max_num_of_turns:
+                break
 
     def get_result_str(self, player1_move: str, player2_move: str, player1_result: Result, player2_result: Result) -> str:
         result_str = f"{self.player1} chooses {player1_move} and {self.player2} chooses {player2_move}\n"
